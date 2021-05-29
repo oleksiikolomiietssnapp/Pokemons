@@ -9,8 +9,8 @@ import UIKit
 
 class PokemonsViewController: UIViewController, UITableViewDataSource {
     
-    var viewModel: PokemonsViewModel?
     @IBOutlet weak var tableView: UITableView!
+    var viewModel: PokemonsViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
