@@ -10,7 +10,9 @@ import UIKit
 class PokemonsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
-    var viewModel: PokemonsViewModel?
+    private var viewModel: PokemonsViewModel?
+    
+    private var activityIndicators = [IndexPath: UIActivityIndicatorView]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,12 +45,32 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         cell.textLabel?.text = pokemon.name
         
         cell.imageView?.image = UIImage(named: "empty")
+        guard let imageView = cell.imageView else {
+            return cell
+        }
+        
+        // Spinner
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.color = .black
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        cell.imageView?.addSubview(activityIndicator)
+        cell.addConstraints([
+            activityIndicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            activityIndicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            activityIndicator.heightAnchor.constraint(equalToConstant: 24),
+            activityIndicator.widthAnchor.constraint(equalToConstant: 24)
+        ])
+        activityIndicator.startAnimating()
+        activityIndicators[indexPath] = activityIndicator
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         viewModel?.fetchPokemonImage(at: indexPath) { data in
             DispatchQueue.main.async {
+                self.activityIndicators[indexPath]?.removeFromSuperview()
+                self.activityIndicators[indexPath] = nil
                 cell.imageView?.image = UIImage(data: data)
             }
         }
