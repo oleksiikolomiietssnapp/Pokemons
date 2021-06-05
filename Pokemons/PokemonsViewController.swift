@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PokemonsViewController: UIViewController, UITableViewDataSource {
+class PokemonsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
     var viewModel: PokemonsViewModel?
@@ -15,6 +15,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
+        tableView.delegate = self
         viewModel = PokemonsViewModel()
         
         viewModel?.subscribe { error in
@@ -41,7 +42,16 @@ class PokemonsViewController: UIViewController, UITableViewDataSource {
         let pokemon = pokemonViewModel.pokemons[indexPath.row]
         cell.textLabel?.text = pokemon.name
         
+        cell.imageView?.image = UIImage(named: "empty")
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        viewModel?.fetchPokemonImage(at: indexPath) { data in
+            DispatchQueue.main.async {
+                cell.imageView?.image = UIImage(data: data)
+            }
+        }
     }
     
 }
