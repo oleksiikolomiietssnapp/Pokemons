@@ -15,4 +15,11 @@ class PokemonsService {
         
         NetworkingPerfomer.performFetch(request: request, completion: completion)
     }
+    
+    static func fetchPokemonDetails(urlString: String,
+                                    completion: @escaping (ServiceResult<PokemonDetailsResponse>) -> Void) {
+        let request = URLRequest(url: URL(string: urlString)!)
+        
+        NetworkingPerfomer.performFetch(request: request, completion: completion)
+    }
 }

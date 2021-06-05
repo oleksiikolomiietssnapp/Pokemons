@@ -30,22 +30,33 @@ class PokemonsViewModel {
         if let cachedData = cache[indexPath] {
             completion(cachedData)
         } else {
-            DispatchQueue.global().async {
-                let pokemon = self.pokemons[indexPath.row]
-                let id = pokemon.url
-                    .components(separatedBy: "/")
-                    .dropLast()
-                    .last!
-                let string = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + id + ".png"
-                guard let url = URL(string: string),
-                      let data = try? Data(contentsOf: url)
-                else { return }
-                
-                self.cache[indexPath] = data
-                
-                DispatchQueue.main.async {
-                    completion(data)
-                }
+            fetchPokemonDetails(at: indexPath, completion)
+        }
+    }
+    
+    private func fetchPokemonDetails(at indexPath: IndexPath, _ completion: @escaping (Data) -> Void) {
+        PokemonsService.fetchPokemonDetails(urlString: self.pokemons[indexPath.row].url) { result in
+            switch result {
+            case .success(let pokemonDetailsResponse):
+                self.handleSuccessResult(pokemonDetailsResponse, at: indexPath, completion)
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    private func handleSuccessResult(_ pokemonDetailsResponse: PokemonDetailsResponse,
+                                     at indexPath: IndexPath,
+                                     _ completion: @escaping (Data) -> Void) {
+        DispatchQueue.global().async {
+            guard let url = URL(string: pokemonDetailsResponse.sprites.frontDefault),
+                  let data = try? Data(contentsOf: url)
+            else { return }
+            
+            self.cache[indexPath] = data
+            
+            DispatchQueue.main.async {
+                completion(data)
             }
         }
     }
