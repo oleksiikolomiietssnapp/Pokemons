@@ -74,8 +74,8 @@ class PokemonsViewModel {
             
             do {
                 let data = try Data(contentsOf: url)
-//                self.cache[indexPath] = data
                 DispatchQueue.main.async {
+                    self.cache[indexPath] = data
                     completion(data)
                 }
             } catch {
