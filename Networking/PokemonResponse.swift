@@ -9,7 +9,7 @@ import Foundation
 
 struct PokemonResponse: Codable {
     let count: Int
-    let next: String
+    let next: String?
     let previous: String
     let pokemons: [Pokemon]
     
@@ -30,7 +30,7 @@ struct PokemonDetailsResponse: Codable {
 }
 
 struct Sprites: Codable {
-    let frontDefault: String
+    let frontDefault: String?
     
     enum CodingKeys: String, CodingKey {
         case frontDefault = "front_default"

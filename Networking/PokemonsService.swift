@@ -10,8 +10,12 @@ import Foundation
 class PokemonsService {
     typealias ServiceResult<T> = Result<T, APIError>
     
-    static func fetchPokemons(completion: @escaping (ServiceResult<PokemonResponse>) -> Void) {
-        let request = URLRequest(url: URL(string: "https://pokeapi.co/api/v2/pokemon?limit=100&offset=200")!)
+    static func fetchPokemons(urlString: String? = nil, completion: @escaping (ServiceResult<PokemonResponse>) -> Void) {
+        let urlStringFOrREquest = urlString ?? "https://pokeapi.co/api/v2/pokemon?limit=100&offset=100"
+        guard let url = URL(string: urlStringFOrREquest) else {
+            return
+        }
+        let request = URLRequest(url: url)
         
         NetworkingPerfomer.performFetch(request: request, completion: completion)
     }

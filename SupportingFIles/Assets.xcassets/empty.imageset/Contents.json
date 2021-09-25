@@ -3,6 +3,16 @@
     {
       "filename" : "1123.png",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "blacksquare_102672.png",
+      "idiom" : "universal"
     }
   ],
   "info" : {

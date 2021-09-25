@@ -38,6 +38,10 @@ class NetworkingPerfomer {
                 } catch {
                     DispatchQueue.main.async {
                         completion(.failure(.wrongType(String(describing: S.self))))
+                        print(
+                            try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                        )
+                        print(error.localizedDescription)
                     }
                 }
                 

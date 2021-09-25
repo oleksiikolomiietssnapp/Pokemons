@@ -45,13 +45,15 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         cell.textLabel?.text = pokemon.name
         
         cell.imageView?.image = UIImage(named: "empty")
+        cell.imageView?.backgroundColor = .clear
+        cell.selectionStyle = .blue
         guard let imageView = cell.imageView else {
             return cell
         }
         
         // Spinner
         let activityIndicator = UIActivityIndicatorView()
-        activityIndicator.color = .black
+        activityIndicator.color = .systemGray
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         cell.imageView?.addSubview(activityIndicator)
         cell.addConstraints([
@@ -73,6 +75,10 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
                 self.activityIndicators[indexPath] = nil
                 cell.imageView?.image = UIImage(data: data)
             }
+        }
+        
+        if ((indexPath.row + 1) == viewModel?.pokemons.count) {
+            viewModel?.loadNext()
         }
     }
     

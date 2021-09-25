@@ -12,13 +12,29 @@ class PokemonsViewModel {
     private var updateCallback: ((Error?) -> Void)?
     
     var pokemons = [Pokemon]()
-    private var cache = [IndexPath: Data]()
+    var next: String?
+    private var cache: [IndexPath: Data] = [:]
     
     func getAllPokemons() {
-        PokemonsService.fetchPokemons { result in
+        PokemonsService.fetchPokemons() { result in
             switch result {
             case .success(let pokemonsResponse):
                 self.pokemons = pokemonsResponse.pokemons
+                self.next = pokemonsResponse.next
+                self.updateCallback?(nil)
+            case .failure(let error):
+                self.updateCallback?(error)
+            }
+        }
+    }
+    
+    func loadNext() {
+        guard let next = next else { return }
+        PokemonsService.fetchPokemons(urlString: next) { result in
+            switch result {
+            case .success(let pokemonsResponse):
+                self.pokemons.append(contentsOf: pokemonsResponse.pokemons)
+                self.next = pokemonsResponse.next
                 self.updateCallback?(nil)
             case .failure(let error):
                 self.updateCallback?(error)
@@ -27,10 +43,12 @@ class PokemonsViewModel {
     }
     
     func fetchPokemonImage(at indexPath: IndexPath, completion: @escaping (Data) -> Void) {
-        if let cachedData = cache[indexPath] {
-            completion(cachedData)
-        } else {
-            fetchPokemonDetails(at: indexPath, completion)
+        DispatchQueue.global(qos: .userInteractive).sync {
+            if let cachedData = cache[indexPath] {
+                completion(cachedData)
+            } else {
+                fetchPokemonDetails(at: indexPath, completion)
+            }
         }
     }
     
@@ -48,16 +66,23 @@ class PokemonsViewModel {
     private func handleSuccessResult(_ pokemonDetailsResponse: PokemonDetailsResponse,
                                      at indexPath: IndexPath,
                                      _ completion: @escaping (Data) -> Void) {
-        DispatchQueue.global().async {
-            guard let url = URL(string: pokemonDetailsResponse.sprites.frontDefault),
-                  let data = try? Data(contentsOf: url)
+        DispatchQueue.global(qos: .userInteractive).async(flags: .barrier) { [weak self] in
+            guard let self = self,
+                  let frontDefault = pokemonDetailsResponse.sprites.frontDefault,
+                  let url = URL(string: frontDefault)
             else { return }
             
-            self.cache[indexPath] = data
-            
-            DispatchQueue.main.async {
-                completion(data)
+            do {
+                let data = try Data(contentsOf: url)
+//                self.cache[indexPath] = data
+                DispatchQueue.main.async {
+                    completion(data)
+                }
+            } catch {
+                self.updateCallback?(error)
+                print(error.localizedDescription)
             }
+            
         }
     }
     
