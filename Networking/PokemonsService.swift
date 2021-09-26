@@ -6,12 +6,25 @@
 //
 
 import Foundation
+import Combine
+
+typealias ServiceResult<T> = Result<T, APIError>
 
 class PokemonsService {
-    typealias ServiceResult<T> = Result<T, APIError>
+    
+    static func cFetchPokemons(urlString: String) -> AnyPublisher<PokemonResponse, Error> {
+        guard let url = URL(string: urlString) else {
+            fatalError()
+        }
+        let request = URLRequest(url: url)
+        
+        return NetworkingPerfomer.performCombineFetch(request: request)
+            .map(\.value)
+            .eraseToAnyPublisher()
+    }
     
     static func fetchPokemons(urlString: String? = nil, completion: @escaping (ServiceResult<PokemonResponse>) -> Void) {
-        let urlStringFOrREquest = urlString ?? "https://pokeapi.co/api/v2/pokemon?limit=100&offset=100"
+        let urlStringFOrREquest = urlString ?? "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
         guard let url = URL(string: urlStringFOrREquest) else {
             return
         }

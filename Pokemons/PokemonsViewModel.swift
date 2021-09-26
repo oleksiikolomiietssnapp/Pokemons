@@ -6,40 +6,55 @@
 //
 
 import Foundation
+import Combine
 
 class PokemonsViewModel {
     
     private var updateCallback: ((Error?) -> Void)?
     
     var pokemons = [Pokemon]()
-    var next: String?
+    var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
+    
     private var cache: [IndexPath: Data] = [:]
+    private var cancellable: Set<AnyCancellable> = []
     
-    func getAllPokemons() {
-        PokemonsService.fetchPokemons() { result in
-            switch result {
-            case .success(let pokemonsResponse):
-                self.pokemons = pokemonsResponse.pokemons
-                self.next = pokemonsResponse.next
-                self.updateCallback?(nil)
-            case .failure(let error):
-                self.updateCallback?(error)
-            }
-        }
-    }
-    
-    func loadNext() {
+    func fetchPokemons() {
         guard let next = next else { return }
-        PokemonsService.fetchPokemons(urlString: next) { result in
-            switch result {
-            case .success(let pokemonsResponse):
-                self.pokemons.append(contentsOf: pokemonsResponse.pokemons)
-                self.next = pokemonsResponse.next
-                self.updateCallback?(nil)
-            case .failure(let error):
-                self.updateCallback?(error)
-            }
-        }
+        
+        PokemonsService.cFetchPokemons(urlString: next)
+            .sink(
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .finished:
+                        print("Done")
+                    case .failure(let error):
+                        self.updateCallback?(error)
+                    }
+                },
+                receiveValue: {
+                    if $0.previous == nil {
+                        self.pokemons = $0.pokemons
+                    } else {
+                        self.pokemons.append(contentsOf: $0.pokemons)
+                    }
+                    self.next = $0.next
+                    
+                    // TODO: ??? Is it better to fire updateCallback in case .finished: ???
+                    self.updateCallback?(nil)
+                }
+            )
+            .store(in: &cancellable)
+
+//        PokemonsService.fetchPokemons() { result in
+//            switch result {
+//            case .success(let pokemonsResponse):
+//                self.pokemons = pokemonsResponse.pokemons
+//                self.next = pokemonsResponse.next
+//                self.updateCallback?(nil)
+//            case .failure(let error):
+//                self.updateCallback?(error)
+//            }
+//        }
     }
     
     func fetchPokemonImage(at indexPath: IndexPath, completion: @escaping (Data) -> Void) {

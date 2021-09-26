@@ -28,7 +28,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             
             self.tableView.reloadData()
         }
-        viewModel?.getAllPokemons()
+        viewModel?.fetchPokemons()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -78,7 +78,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         }
         
         if ((indexPath.row + 1) == viewModel?.pokemons.count) {
-            viewModel?.loadNext()
+            viewModel?.fetchPokemons()
         }
     }
     

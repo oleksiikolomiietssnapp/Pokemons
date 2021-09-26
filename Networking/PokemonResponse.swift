@@ -10,7 +10,7 @@ import Foundation
 struct PokemonResponse: Codable {
     let count: Int
     let next: String?
-    let previous: String
+    let previous: String?
     let pokemons: [Pokemon]
     
     enum CodingKeys: String, CodingKey {
