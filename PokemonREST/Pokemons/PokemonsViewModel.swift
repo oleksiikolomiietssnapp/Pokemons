@@ -19,6 +19,7 @@ class PokemonsViewModel {
     private var cancellable: Set<AnyCancellable> = []
     
     func fetchPokemons() {
+        
         guard let next = next else { return }
         
         PokemonsService.fetchPokemons(urlString: next) { result in
