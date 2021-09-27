@@ -12,21 +12,35 @@ typealias ServiceResult<T> = Result<T, APIError>
 
 class PokemonsService {
     
-    static func getAnyPublisher<S: Decodable>(urlString: String) -> AnyPublisher<S, APIError> {
+    let pokemonsPublisher = PassthroughSubject<PokemonResponse, APIError>()
+    
+    func fetchPokemons (urlString: String){
         guard let url = URL(string: urlString) else {
             fatalError()
         }
         
         let request = URLRequest(url: url)
         
-        return NetworkingPerfomer.performCombineFetch(request: request)
-            .map(\.value)
-            .mapError( { APIError.server($0) })
-            .eraseToAnyPublisher()
-    }
-    
-    static func combineFetchPokemons(urlString: String) -> AnyPublisher<PokemonResponse, APIError> {
-        return getAnyPublisher(urlString: urlString)
+        URLSession.shared.dataTask(with: request) {[weak self] data, response, error in
+            guard let self = self else {return}
+            if let error = error, data != nil {
+                self.pokemonsPublisher.send(completion: .failure(.noData))
+                return
+            }
+            do {
+                let response = try JSONDecoder().decode(PokemonResponse.self, from: data!)
+                self.pokemonsPublisher.send(response)
+                if  response.next == nil {
+                    self.pokemonsPublisher.send(completion: .finished)
+                }
+            } catch {
+                self.pokemonsPublisher.send(completion: .failure(.noData))
+            }
+        }.resume()
+//        return NetworkingPerfomer.performCombineFetch(request: request)
+//            .map(\.value)
+//            .mapError( { APIError.server($0) })
+//            .eraseToAnyPublisher()
     }
     
 //    static func combineFetchPokemonDetails(urlString: String) -> AnyPublisher<Data, APIError> {

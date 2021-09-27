@@ -18,7 +18,6 @@ class NetworkingPerfomer {
     static func performCombineFetch<S: Decodable>(request: URLRequest) -> AnyPublisher<Response<S>, Error> {
         
         let decoder = JSONDecoder()
-        
         return URLSession.shared
             .dataTaskPublisher(for: request)
             .tryMap { result -> Response<S> in

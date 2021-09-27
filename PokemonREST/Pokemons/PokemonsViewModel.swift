@@ -11,6 +11,7 @@ import Combine
 class PokemonsViewModel {
     
     private var updateCallback: ((Error?) -> Void)?
+    private let pokemonService = PokemonsService()
     
     var pokemons = [Pokemon]()
     var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
@@ -18,29 +19,37 @@ class PokemonsViewModel {
     private var cache: [IndexPath: Data] = [:]
     private var cancellable: Set<AnyCancellable> = []
     
+    init(){
+        subscribeOnPokemons()
+    }
+    
+    func subscribeOnPokemons(){
+        pokemonService.pokemonsPublisher.receive(on: DispatchQueue.main).sink(
+            receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    self.updateCallback?(nil)
+                case .failure(let error):
+                    self.updateCallback?(error)
+                }
+            },
+            receiveValue: {
+                if $0.previous == nil {
+                    self.pokemons = $0.pokemons
+                } else {
+                    self.pokemons.append(contentsOf: $0.pokemons)
+                }
+                self.next = $0.next
+                self.updateCallback?(nil)
+            }
+        )
+        .store(in: &cancellable)
+    }
+    
     func fetchPokemons() {
         guard let next = next else { return }
         
-        PokemonsService.combineFetchPokemons(urlString: next)
-            .sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        self.updateCallback?(nil)
-                    case .failure(let error):
-                        self.updateCallback?(error)
-                    }
-                },
-                receiveValue: {
-                    if $0.previous == nil {
-                        self.pokemons = $0.pokemons
-                    } else {
-                        self.pokemons.append(contentsOf: $0.pokemons)
-                    }
-                    self.next = $0.next
-                }
-            )
-            .store(in: &cancellable)
+        pokemonService.fetchPokemons(urlString: next)
 
 //        PokemonsService.fetchPokemons() { result in
 //            switch result {
