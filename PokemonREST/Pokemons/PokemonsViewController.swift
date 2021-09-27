@@ -69,6 +69,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        // TODO: Look why spinner iis there for 'kommo-0-totem' 
         viewModel?.fetchPokemonImage(at: indexPath) { data in
             DispatchQueue.main.async {
                 self.activityIndicators[indexPath]?.removeFromSuperview()

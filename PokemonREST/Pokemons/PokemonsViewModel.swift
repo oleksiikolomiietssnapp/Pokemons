@@ -21,37 +21,22 @@ class PokemonsViewModel {
     func fetchPokemons() {
         guard let next = next else { return }
         
-        PokemonsService.combineFetchPokemons(urlString: next)
-            .sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        self.updateCallback?(nil)
-                    case .failure(let error):
-                        self.updateCallback?(error)
-                    }
-                },
-                receiveValue: {
-                    if $0.previous == nil {
-                        self.pokemons = $0.pokemons
-                    } else {
-                        self.pokemons.append(contentsOf: $0.pokemons)
-                    }
-                    self.next = $0.next
+        PokemonsService.fetchPokemons(urlString: next) { result in
+            switch result {
+            case .success(let pokemonsResponse):
+                if pokemonsResponse.previous == nil {
+                    self.pokemons = pokemonsResponse.pokemons
+                } else {
+                    self.pokemons.append(contentsOf: pokemonsResponse.pokemons)
                 }
-            )
-            .store(in: &cancellable)
-
-//        PokemonsService.fetchPokemons() { result in
-//            switch result {
-//            case .success(let pokemonsResponse):
-//                self.pokemons = pokemonsResponse.pokemons
-//                self.next = pokemonsResponse.next
-//                self.updateCallback?(nil)
-//            case .failure(let error):
-//                self.updateCallback?(error)
-//            }
-//        }
+                
+                self.next = pokemonsResponse.next
+                
+                self.updateCallback?(nil)
+            case .failure(let error):
+                self.updateCallback?(error)
+            }
+        }
     }
     
     func fetchPokemonImage(at indexPath: IndexPath, completion: @escaping (Data) -> Void) {
