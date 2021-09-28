@@ -11,19 +11,16 @@ typealias ServiceResult<T> = Result<T, APIError>
 
 class PokemonsService {
     
-    static func fetchPokemons(urlString: String? = nil) async throws -> ServiceResult<PokemonResponse> {
+    static func fetchPokemons(urlString: String? = nil) async throws -> PokemonResponse {
         let urlStringFOrREquest = urlString ?? "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
         guard let url = URL(string: urlStringFOrREquest) else {
-            return .failure(.noData)
+            throw APIError.noData
         }
         let request = URLRequest(url: url)
+        let data = try await NetworkingPerfomer.performFetch(with: request)
+        let pokemons = try JSONDecoder().decode(PokemonResponse.self, from: data)
         
-        let (data, error) = try await URLSession.shared.data(for: request)
-        guard let pokemons = try? JSONDecoder().decode(PokemonResponse.self, from: data) else {
-            return .failure(APIError.noData)
-        }
-        
-        return .success(pokemons)
+        return pokemons
     }
     
     static func fetchPokemonDetails(urlString: String,

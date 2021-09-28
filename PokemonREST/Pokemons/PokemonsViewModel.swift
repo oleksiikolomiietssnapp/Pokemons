@@ -22,21 +22,16 @@ class PokemonsViewModel {
         guard let next = next else { return }
         Task{
             do{
-                let result = try await PokemonsService.fetchPokemons(urlString: next)
-                switch result {
-                case .success(let pokemonsResponse):
-                    if pokemonsResponse.previous == nil {
-                        self.pokemons = pokemonsResponse.pokemons
-                    } else {
-                        self.pokemons.append(contentsOf: pokemonsResponse.pokemons)
-                    }
-                    
-                    self.next = pokemonsResponse.next
-                    
-                    self.updateCallback?(nil)
-                case .failure(let error):
-                    self.updateCallback?(error)
+                let pokemonsResponse = try await PokemonsService.fetchPokemons(urlString: next)
+                if pokemonsResponse.previous == nil {
+                    self.pokemons = pokemonsResponse.pokemons
+                } else {
+                    self.pokemons.append(contentsOf: pokemonsResponse.pokemons)
                 }
+                
+                self.next = pokemonsResponse.next
+                
+                self.updateCallback?(nil)
             } catch {
                 print(error)
             }

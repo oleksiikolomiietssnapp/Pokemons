@@ -9,7 +9,16 @@ import Foundation
 
 class NetworkingPerfomer {
     
-    static func performFetch<S: Decodable>(request: URLRequest, completion: @escaping (ServiceResult<S>) -> Void) {
+    static func performFetch(with request: URLRequest) async throws ->  Data{
+        let (data, response) = try await URLSession.shared.data(for: request)
+        if let response = response as? HTTPURLResponse,
+           !(200...299).contains(response.statusCode){
+           throw APIError.statusCode(response.statusCode)
+        }
+        return data
+    }
+    
+    static func performFetch<T: Decodable>(request: URLRequest, completion: @escaping (ServiceResult<T>) -> Void) {
         
         URLSession.shared.dataTask(with: request) { data, response, error in
             // error
@@ -33,13 +42,13 @@ class NetworkingPerfomer {
             if let data = data {
                 
                 do {
-                    let decodedPokemons = try JSONDecoder().decode(S.self, from: data)
+                    let decodedPokemons = try JSONDecoder().decode(T.self, from: data)
                     DispatchQueue.main.async {
                         completion(.success(decodedPokemons))
                     }
                 } catch {
                     DispatchQueue.main.async {
-                        completion(.failure(.wrongType(String(describing: S.self))))
+                        completion(.failure(.wrongType(String(describing: T.self))))
                         let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
                         print(json ?? "no json")
                         print(error.localizedDescription)
