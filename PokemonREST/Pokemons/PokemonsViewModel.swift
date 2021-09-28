@@ -15,14 +15,15 @@ class PokemonsViewModel {
     var pokemons = [Pokemon]()
     var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
     
-    private var cache: [IndexPath: Data] = [:]
+    private(set) var cache: [IndexPath: Data] = [:]
     private var cancellable: Set<AnyCancellable> = []
     
     func fetchPokemons() {
         guard let next = next else { return }
-        Task{
-            do{
-                let pokemonsResponse = try await PokemonsService.fetchPokemons(urlString: next)
+        
+        Task {
+            do {
+                let pokemonsResponse: PokemonResponse = try await NetworkingPerfomer.performFetch(using: next)
                 if pokemonsResponse.previous == nil {
                     self.pokemons = pokemonsResponse.pokemons
                 } else {
@@ -33,53 +34,30 @@ class PokemonsViewModel {
                 
                 self.updateCallback?(nil)
             } catch {
-                print(error)
-            }
-        }
-    }
-    
-    func fetchPokemonImage(at indexPath: IndexPath, completion: @escaping (Data) -> Void) {
-        DispatchQueue.global(qos: .userInteractive).sync {
-            if let cachedData = cache[indexPath] {
-                completion(cachedData)
-            } else {
-                fetchPokemonDetails(at: indexPath, completion)
-            }
-        }
-    }
-    
-    private func fetchPokemonDetails(at indexPath: IndexPath, _ completion: @escaping (Data) -> Void) {
-        PokemonsService.fetchPokemonDetails(urlString: self.pokemons[indexPath.row].url) { result in
-            switch result {
-            case .success(let pokemonDetailsResponse):
-                self.handleSuccessResult(pokemonDetailsResponse, at: indexPath, completion)
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    private func handleSuccessResult(_ pokemonDetailsResponse: PokemonDetailsResponse,
-                                     at indexPath: IndexPath,
-                                     _ completion: @escaping (Data) -> Void) {
-        DispatchQueue.global(qos: .userInteractive).async(flags: .barrier) { [weak self] in
-            guard let self = self,
-                  let frontDefault = pokemonDetailsResponse.sprites.frontDefault,
-                  let url = URL(string: frontDefault)
-            else { return }
-            
-            do {
-                let data = try Data(contentsOf: url)
-                DispatchQueue.main.async {
-                    self.cache[indexPath] = data
-                    completion(data)
-                }
-            } catch {
                 self.updateCallback?(error)
-                print(error.localizedDescription)
             }
-            
         }
+    }
+    
+    func fetchPokemonDetails(at indexPath: IndexPath) async throws -> Data {
+        let detailsURLString = self.pokemons[indexPath.row].url
+        let details: PokemonDetailsResponse = try await NetworkingPerfomer.performFetch(using: detailsURLString)
+        return try getImageData(for: details, at: indexPath)
+    }
+    
+    private func getImageData(
+        for pokemonDetailsResponse: PokemonDetailsResponse,
+        at indexPath: IndexPath
+    ) throws -> Data {
+        
+        guard let frontDefault = pokemonDetailsResponse.sprites.frontDefault,
+              let url = URL(string: frontDefault)
+        else { throw APIError.brokenURL }
+        
+        let data = try Data(contentsOf: url)
+        self.cache[indexPath] = data
+        
+        return data
     }
     
     func subscribe(updateCallback: @escaping (Error?) -> Void) {

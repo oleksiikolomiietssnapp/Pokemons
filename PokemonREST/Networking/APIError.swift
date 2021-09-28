@@ -11,6 +11,7 @@ enum APIError: Error, LocalizedError {
     case server(Error)
     case statusCode(Int)
     case noData
+    case brokenURL
     case wrongType(String)
     
     var errorDescription: String? {
@@ -21,6 +22,8 @@ enum APIError: Error, LocalizedError {
             return "Status code: \(code)"
         case .noData:
             return "Data is nil"
+        case .brokenURL:
+            return "URL is broken"
         case .wrongType(let typeName):
             return "Response type is not \(typeName)"
         }
