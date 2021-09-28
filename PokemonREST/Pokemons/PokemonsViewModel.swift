@@ -51,7 +51,7 @@ class PokemonsViewModel {
         at indexPath: IndexPath
     ) throws -> Data {
         
-        guard let frontDefault = pokemonDetailsResponse.sprites.front.default,
+        guard let frontDefault = pokemonDetailsResponse.sprites.all.first,
               let url = URL(string: frontDefault)
         else { throw APIError.brokenURL }
         

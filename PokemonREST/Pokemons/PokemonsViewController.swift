@@ -95,11 +95,15 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             Task {
                 let currentCell = cell
                 let currentIndexPath = indexPath
-                let imageData = try await viewModel?.fetchPokemonDetails(at: currentIndexPath)
-                DispatchQueue.main.async {
-                    currentCell.imageView?.image = UIImage(data: imageData!)
-                    self.activityIndicators[currentIndexPath]?.removeFromSuperview()
-                    self.activityIndicators[currentIndexPath] = nil
+                do {
+                    let imageData = try await viewModel?.fetchPokemonDetails(at: currentIndexPath)
+                    DispatchQueue.main.async {
+                        currentCell.imageView?.image = UIImage(data: imageData!)
+                        self.activityIndicators[currentIndexPath]?.removeFromSuperview()
+                        self.activityIndicators[currentIndexPath] = nil
+                    }
+                } catch {
+                    print(error.localizedDescription)
                 }
             }
         }
