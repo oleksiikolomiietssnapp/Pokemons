@@ -42,6 +42,7 @@ class PokemonsViewModel {
     func fetchPokemonDetails(at indexPath: IndexPath) async throws -> Data {
         let detailsURLString = self.pokemons[indexPath.row].url
         let details: PokemonDetailsResponse = try await NetworkingPerfomer.performFetch(using: detailsURLString)
+        pokemons[indexPath.row].details = details
         return try getImageData(for: details, at: indexPath)
     }
     
@@ -50,7 +51,7 @@ class PokemonsViewModel {
         at indexPath: IndexPath
     ) throws -> Data {
         
-        guard let frontDefault = pokemonDetailsResponse.sprites.frontDefault,
+        guard let frontDefault = pokemonDetailsResponse.sprites.front.default,
               let url = URL(string: frontDefault)
         else { throw APIError.brokenURL }
         

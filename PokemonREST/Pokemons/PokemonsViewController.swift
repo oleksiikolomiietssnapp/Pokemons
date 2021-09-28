@@ -16,6 +16,9 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        title = "Pokemons"
+        
         tableView.dataSource = self
         tableView.delegate = self
         viewModel = PokemonsViewModel()
@@ -30,6 +33,19 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             }
         }
         viewModel?.fetchPokemons()
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "PokemonDetails", bundle: nil)
+        guard let details = storyboard
+                .instantiateViewController(withIdentifier: "PokemonDetailsViewController")
+                as? PokemonDetailsViewController
+        else { return }
+        
+        let viewModel = PokemonDetailsViewModel(details: viewModel!.pokemons[indexPath.row].details!)
+        details.viewModel = viewModel
+        
+        navigationController?.pushViewController(details, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
