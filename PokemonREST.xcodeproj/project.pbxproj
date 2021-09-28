@@ -16,7 +16,6 @@
 		536B1CC82662482A000578F7 /* PokemonResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536B1CC72662482A000578F7 /* PokemonResponse.swift */; };
 		536B1CCA2662483B000578F7 /* APIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536B1CC92662483B000578F7 /* APIError.swift */; };
 		536B1CCC2662484D000578F7 /* NetworkingPerfomer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536B1CCB2662484D000578F7 /* NetworkingPerfomer.swift */; };
-		536B1CCE26624864000578F7 /* PokemonsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536B1CCD26624864000578F7 /* PokemonsService.swift */; };
 		536B1CD026624875000578F7 /* PokemonsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536B1CCF26624875000578F7 /* PokemonsViewModel.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,7 +31,6 @@
 		536B1CC72662482A000578F7 /* PokemonResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonResponse.swift; sourceTree = "<group>"; };
 		536B1CC92662483B000578F7 /* APIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIError.swift; sourceTree = "<group>"; };
 		536B1CCB2662484D000578F7 /* NetworkingPerfomer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingPerfomer.swift; sourceTree = "<group>"; };
-		536B1CCD26624864000578F7 /* PokemonsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonsService.swift; sourceTree = "<group>"; };
 		536B1CCF26624875000578F7 /* PokemonsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -88,7 +86,6 @@
 		536B1CD2266248E6000578F7 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				536B1CCD26624864000578F7 /* PokemonsService.swift */,
 				536B1CCB2662484D000578F7 /* NetworkingPerfomer.swift */,
 				536B1CC72662482A000578F7 /* PokemonResponse.swift */,
 				536B1CC92662483B000578F7 /* APIError.swift */,
@@ -182,7 +179,6 @@
 				536B1CB4266247EC000578F7 /* AppDelegate.swift in Sources */,
 				536B1CCA2662483B000578F7 /* APIError.swift in Sources */,
 				536B1CB6266247EC000578F7 /* SceneDelegate.swift in Sources */,
-				536B1CCE26624864000578F7 /* PokemonsService.swift in Sources */,
 				536B1CCC2662484D000578F7 /* NetworkingPerfomer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -333,6 +329,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FAJ4V9RHA6;
 				INFOPLIST_FILE = PokemonREST/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -352,6 +349,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FAJ4V9RHA6;
 				INFOPLIST_FILE = PokemonREST/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
