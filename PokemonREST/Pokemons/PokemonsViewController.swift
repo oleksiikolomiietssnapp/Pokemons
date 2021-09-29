@@ -16,6 +16,9 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        title = "Pokemon"
+        
         tableView.dataSource = self
         tableView.delegate = self
         viewModel = PokemonsViewModel()
