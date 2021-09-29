@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PokemonResponse: Codable {
+struct PokemonResponse: Decodable {
     let count: Int
     let next: String?
     let previous: String?
@@ -19,20 +19,18 @@ struct PokemonResponse: Codable {
     }
 }
 
-struct Pokemon: Codable {
+struct Pokemon: Decodable {
     let name: String
     let url: String
+    var details: PokemonDetailsResponse? = nil
 }
 
 
-struct PokemonDetailsResponse: Codable {
+struct PokemonDetailsResponse: Decodable {
     let sprites: Sprites
-}
-
-struct Sprites: Codable {
-    let frontDefault: String?
+    let name: String
     
-    enum CodingKeys: String, CodingKey {
-        case frontDefault = "front_default"
+    var spritesCount: Int {
+        return sprites.all.count
     }
 }

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 class PokemonsViewModel {
     
@@ -16,7 +15,6 @@ class PokemonsViewModel {
     var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
     
     private(set) var cache: [IndexPath: Data] = [:]
-    private var cancellable: Set<AnyCancellable> = []
     
     func fetchPokemons() {
         guard let next = next else { return }
@@ -42,6 +40,7 @@ class PokemonsViewModel {
     func fetchPokemonDetails(at indexPath: IndexPath) async throws -> Data {
         let detailsURLString = self.pokemons[indexPath.row].url
         let details: PokemonDetailsResponse = try await NetworkingPerfomer.performFetch(using: detailsURLString)
+        pokemons[indexPath.row].details = details
         return try getImageData(for: details, at: indexPath)
     }
     
@@ -50,7 +49,7 @@ class PokemonsViewModel {
         at indexPath: IndexPath
     ) throws -> Data {
         
-        guard let frontDefault = pokemonDetailsResponse.sprites.frontDefault,
+        guard let frontDefault = pokemonDetailsResponse.sprites.all.first,
               let url = URL(string: frontDefault)
         else { throw APIError.brokenURL }
         
