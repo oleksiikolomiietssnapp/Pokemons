@@ -87,6 +87,8 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
                     let currentIndexPath = indexPath
                     do {
                         let imageData = try await viewModel?.fetchPokemonDetails(at: currentIndexPath)
+                        //resolve problem with image glitch
+                        guard let indexes = tableView.indexPathsForVisibleRows, indexes.contains(indexPath) else {return}
                         DispatchQueue.main.async {
                             cell.pokemonImage?.image = UIImage(data: imageData!)
                             cell.isImageLoading = false

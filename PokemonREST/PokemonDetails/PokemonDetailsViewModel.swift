@@ -15,14 +15,16 @@ class PokemonDetailsViewModel {
     
     init(details: PokemonDetailsResponse) {
         self.details = details
+    }
+    
+    func loadDetails() {
+                cache = try! details.sprites.all
+                    .map { sprite in
+                        guard let url = URL(string: sprite)
+                        else { throw APIError.brokenURL }
         
-        cache = try! details.sprites.all
-            .map { sprite in
-                guard let url = URL(string: sprite)
-                else { throw APIError.brokenURL }
-                
-                self.urls.append(url)
-                return try Data(contentsOf: url)
-            }
+                        self.urls.append(url)
+                        return try Data(contentsOf: url)
+                    }
     }
 }

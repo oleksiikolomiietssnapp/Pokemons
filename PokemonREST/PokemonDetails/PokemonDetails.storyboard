@@ -37,18 +37,24 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="bK0-Zx-Vut">
+                                <rect key="frame" x="188.5" y="429.5" width="37" height="37"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="bK0-Zx-Vut" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="3k9-VA-4Rp"/>
                             <constraint firstItem="PhA-12-YFU" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="E7o-ai-202"/>
                             <constraint firstItem="PhA-12-YFU" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" id="Iuq-dC-3Q2"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="PhA-12-YFU" secondAttribute="bottom" id="aM3-OV-bSF"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="PhA-12-YFU" secondAttribute="trailing" id="bsh-oC-EL1"/>
+                            <constraint firstItem="bK0-Zx-Vut" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="p6u-wc-S3x"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="PhA-12-YFU" id="f3C-k6-juv"/>
+                        <outlet property="loadingSpinner" destination="bK0-Zx-Vut" id="hGw-Jl-7I2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

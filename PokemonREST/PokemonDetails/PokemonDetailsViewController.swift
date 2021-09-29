@@ -9,13 +9,28 @@ import WebKit
 import UIKit
 
 class PokemonDetailsViewController: UIViewController {
+    @IBOutlet weak var loadingSpinner: UIActivityIndicatorView!
     @IBOutlet weak var collectionView: UICollectionView!
     var viewModel: PokemonDetailsViewModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        loadPokemonDetails()
+    }
+
+    func loadPokemonDetails(){
         title = (viewModel?.details.name ?? "unknown name").capitalized
+        DispatchQueue.global(qos: .background).async{
+            self.viewModel?.loadDetails()
+            DispatchQueue.main.async {
+                self.setupPokemon()
+            }
+        }
+    }
+    
+    func setupPokemon(){
+        loadingSpinner.isHidden = true
+        loadingSpinner.stopAnimating()
         
         collectionView.delegate = self
         collectionView.dataSource = self
