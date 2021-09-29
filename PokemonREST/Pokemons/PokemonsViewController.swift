@@ -16,6 +16,9 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        title = "Pokemons"
+        
         tableView.dataSource = self
         tableView.delegate = self
         viewModel = PokemonsViewModel()
@@ -32,6 +35,19 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         viewModel?.fetchPokemons()
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "PokemonDetails", bundle: nil)
+        guard let details = storyboard
+                .instantiateViewController(withIdentifier: "PokemonDetailsViewController")
+                as? PokemonDetailsViewController
+        else { return }
+        
+        let viewModel = PokemonDetailsViewModel(details: viewModel!.pokemons[indexPath.row].details!)
+        details.viewModel = viewModel
+        
+        navigationController?.pushViewController(details, animated: true)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.pokemons.count ?? 0
     }
@@ -43,7 +59,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             return cell
         }
         let pokemon = pokemonViewModel.pokemons[indexPath.row]
-        cell.textLabel?.text = pokemon.name
+        cell.textLabel?.text = "\(indexPath.row). " + pokemon.name
         
         cell.imageView?.image = UIImage(named: "empty")
         cell.imageView?.backgroundColor = .clear
@@ -70,12 +86,25 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // TODO: Look why spinner iis there for 'kommo-0-totem' 
-        viewModel?.fetchPokemonImage(at: indexPath) { data in
-            DispatchQueue.main.async {
-                self.activityIndicators[indexPath]?.removeFromSuperview()
-                self.activityIndicators[indexPath] = nil
-                cell.imageView?.image = UIImage(data: data)
+        // TODO: Look why spinner is there for 'kommo-0-totem'
+        if let cachedData = viewModel?.cache[indexPath] {
+            cell.imageView?.image = UIImage(data: cachedData)
+            self.activityIndicators[indexPath]?.removeFromSuperview()
+            self.activityIndicators[indexPath] = nil
+        } else {
+            Task {
+                let currentCell = cell
+                let currentIndexPath = indexPath
+                do {
+                    let imageData = try await viewModel?.fetchPokemonDetails(at: currentIndexPath)
+                    DispatchQueue.main.async {
+                        currentCell.imageView?.image = UIImage(data: imageData!)
+                        self.activityIndicators[currentIndexPath]?.removeFromSuperview()
+                        self.activityIndicators[currentIndexPath] = nil
+                    }
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
         }
         
