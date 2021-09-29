@@ -21,6 +21,7 @@
 		53833C97270393800062C9F5 /* PokemonDetails.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53833C96270393800062C9F5 /* PokemonDetails.storyboard */; };
 		53833C9A2703AACC0062C9F5 /* Sprites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53833C992703AACC0062C9F5 /* Sprites.swift */; };
 		53833C9C2703BF2C0062C9F5 /* PokemonDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53833C9B2703BF2C0062C9F5 /* PokemonDetailsViewModel.swift */; };
+		9596F75E27045E2F00BEE916 /* PokemonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9596F75D27045E2F00BEE916 /* PokemonCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		53833C96270393800062C9F5 /* PokemonDetails.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = PokemonDetails.storyboard; sourceTree = "<group>"; };
 		53833C992703AACC0062C9F5 /* Sprites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sprites.swift; sourceTree = "<group>"; };
 		53833C9B2703BF2C0062C9F5 /* PokemonDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonDetailsViewModel.swift; sourceTree = "<group>"; };
+		9596F75D27045E2F00BEE916 /* PokemonCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokemonCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				536B1CB7266247EC000578F7 /* PokemonsViewController.swift */,
+				9596F75D27045E2F00BEE916 /* PokemonCell.swift */,
 				536B1CCF26624875000578F7 /* PokemonsViewModel.swift */,
 				536B1CB9266247EC000578F7 /* Main.storyboard */,
 			);
@@ -196,6 +199,7 @@
 			files = (
 				536B1CC82662482A000578F7 /* PokemonResponse.swift in Sources */,
 				536B1CB8266247EC000578F7 /* PokemonsViewController.swift in Sources */,
+				9596F75E27045E2F00BEE916 /* PokemonCell.swift in Sources */,
 				536B1CD026624875000578F7 /* PokemonsViewModel.swift in Sources */,
 				53833C9A2703AACC0062C9F5 /* Sprites.swift in Sources */,
 				53833C9C2703BF2C0062C9F5 /* PokemonDetailsViewModel.swift in Sources */,
@@ -351,7 +355,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = FAJ4V9RHA6;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PokemonREST/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -371,7 +375,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = FAJ4V9RHA6;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = PokemonREST/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
