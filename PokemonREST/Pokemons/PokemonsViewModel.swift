@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 class PokemonsViewModel {
     
@@ -16,7 +15,6 @@ class PokemonsViewModel {
     var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
     
     private var cache: [IndexPath: Data] = [:]
-    private var cancellable: Set<AnyCancellable> = []
     
     func fetchPokemons() {
         guard let next = next else { return }
@@ -39,12 +37,10 @@ class PokemonsViewModel {
     }
     
     func fetchPokemonImage(at indexPath: IndexPath, completion: @escaping (Data) -> Void) {
-        DispatchQueue.global(qos: .userInteractive).sync {
-            if let cachedData = cache[indexPath] {
-                completion(cachedData)
-            } else {
-                fetchPokemonDetails(at: indexPath, completion)
-            }
+        if let cachedData = cache[indexPath] {
+            completion(cachedData)
+        } else {
+            fetchPokemonDetails(at: indexPath, completion)
         }
     }
     
