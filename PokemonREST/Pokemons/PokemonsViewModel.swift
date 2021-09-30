@@ -13,24 +13,42 @@ class PokemonsViewModel {
     private var updateCallback: ((Error?) -> Void)?
     
     var pokemons = [Pokemon]()
+    var pokemonsCount: Int = 0
+    var isReversed: Bool = false{
+        didSet{
+            pokemons.removeAll()
+            cache.removeAll()
+            next = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
+            previus = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=\(pokemonsCount-100)"
+            fetchPokemons()
+        }
+    }
+    
     var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
+    lazy var previus: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=\(pokemonsCount-100)"
     
     private var cache: [IndexPath: Data] = [:]
     private var cancellable: Set<AnyCancellable> = []
     
     func fetchPokemons() {
-        guard let next = next else { return }
+        if isReversed, previus == nil{
+            return
+        } else if !isReversed, next == nil {
+            return
+        }
         
-        PokemonsService.fetchPokemons(urlString: next) { result in
+        PokemonsService.fetchPokemons(urlString: isReversed ? previus : next) { result in
             switch result {
             case .success(let pokemonsResponse):
-                if pokemonsResponse.previous == nil {
-                    self.pokemons = pokemonsResponse.pokemons
+                if self.isReversed{
+                    self.pokemons.append(contentsOf: pokemonsResponse.pokemons.reversed())
+                    self.previus = pokemonsResponse.previous
                 } else {
                     self.pokemons.append(contentsOf: pokemonsResponse.pokemons)
+                    self.next = pokemonsResponse.next
                 }
                 
-                self.next = pokemonsResponse.next
+                self.pokemonsCount = pokemonsResponse.count
                 
                 self.updateCallback?(nil)
             case .failure(let error):

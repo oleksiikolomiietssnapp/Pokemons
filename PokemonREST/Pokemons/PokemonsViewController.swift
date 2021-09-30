@@ -16,11 +16,12 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        title = "Pokemon"
-        
-        tableView.dataSource = self
-        tableView.delegate = self
+        prepareNavigationBar()
+        prepareTableView()
+        prepareViewModel()
+    }
+    
+    func prepareViewModel(){
         viewModel = PokemonsViewModel()
         
         viewModel?.subscribe { error in
@@ -32,6 +33,24 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             self.tableView.reloadData()
         }
         viewModel?.fetchPokemons()
+    }
+    
+    func prepareTableView(){
+        tableView.dataSource = self
+        tableView.delegate = self
+    }
+    
+    func prepareNavigationBar(){
+        title = "Pokemon"
+        let button = UIBarButtonItem(image: UIImage(named: "reverse"), style: .plain, target: self, action: #selector(reverse))
+        button.width = 20
+        navigationItem.rightBarButtonItem = button
+       
+    }
+    
+    @objc func reverse(){
+        guard let viewModel = viewModel else { return }
+        viewModel.isReversed = !viewModel.isReversed
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
