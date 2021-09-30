@@ -14,20 +14,28 @@ class PokemonsViewModel {
     
     var pokemons = [Pokemon]()
     var pokemonsCount: Int = 0
-    var isReversed: Bool = false{
-        didSet{
-            pokemons.removeAll()
-            cache.removeAll()
-            next = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
-            previus = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=\(pokemonsCount-100)"
-            fetchPokemons()
-        }
+    private var isReversed: Bool = false
+    
+    func toggleReverse() {
+        isReversed.toggle()
+        
+        pokemons.reverse()
+        
+        updateCallback?(nil)
+
+//        pokemons.removeAll()
+//        cache.removeAll()
+        
+//        next = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
+//        previus = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=\(pokemonsCount-100)"
+        
+//        fetchPokemons()
     }
     
     var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
     lazy var previus: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=\(pokemonsCount-100)"
     
-    private var cache: [IndexPath: Data] = [:]
+    private var cache: [String: Data] = [:]
     private var cancellable: Set<AnyCancellable> = []
     
     func fetchPokemons() {
@@ -59,7 +67,8 @@ class PokemonsViewModel {
     
     func fetchPokemonImage(at indexPath: IndexPath, completion: @escaping (Data) -> Void) {
         DispatchQueue.global(qos: .userInteractive).sync {
-            if let cachedData = cache[indexPath] {
+            let name = pokemons[indexPath.row].name
+            if let cachedData = cache[name] {
                 completion(cachedData)
             } else {
                 fetchPokemonDetails(at: indexPath, completion)
@@ -90,7 +99,8 @@ class PokemonsViewModel {
             do {
                 let data = try Data(contentsOf: url)
                 DispatchQueue.main.async {
-                    self.cache[indexPath] = data
+                    let name = self.pokemons[indexPath.row].name
+                    self.cache[name] = data
                     completion(data)
                 }
             } catch {

@@ -50,7 +50,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     @objc func reverse(){
         guard let viewModel = viewModel else { return }
-        viewModel.isReversed = !viewModel.isReversed
+        viewModel.toggleReverse()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -64,7 +64,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             return cell
         }
         let pokemon = pokemonViewModel.pokemons[indexPath.row]
-        cell.textLabel?.text = pokemon.name
+        cell.textLabel?.text = "\(indexPath.row). " + pokemon.name
         
         cell.imageView?.image = UIImage(named: "empty")
         cell.imageView?.backgroundColor = .clear
@@ -100,9 +100,10 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             }
         }
         
-        if ((indexPath.row + 1) == viewModel?.pokemons.count) {
-            viewModel?.fetchPokemons()
-        }
+        // MARK: Fetching next page with pokemons
+//        if ((indexPath.row + 1) == viewModel?.pokemons.count) {
+//            viewModel?.fetchPokemons()
+//        }
     }
     
 }
