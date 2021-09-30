@@ -16,11 +16,12 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        title = "Pokemon"
-        
-        tableView.dataSource = self
-        tableView.delegate = self
+        prepareNavigationBar()
+        prepareTableView()
+        prepareViewModel()
+    }
+    
+    func prepareViewModel(){
         viewModel = PokemonsViewModel()
         
         viewModel?.subscribe { error in
@@ -34,6 +35,24 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         viewModel?.fetchPokemons()
     }
     
+    func prepareTableView(){
+        tableView.dataSource = self
+        tableView.delegate = self
+    }
+    
+    func prepareNavigationBar(){
+        title = "Pokemon"
+        let button = UIBarButtonItem(image: UIImage(named: "reverse"), style: .plain, target: self, action: #selector(reverse))
+        button.width = 20
+        navigationItem.rightBarButtonItem = button
+       
+    }
+    
+    @objc func reverse(){
+        guard let viewModel = viewModel else { return }
+        viewModel.toggleReverse()
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel?.pokemons.count ?? 0
     }
@@ -45,7 +64,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             return cell
         }
         let pokemon = pokemonViewModel.pokemons[indexPath.row]
-        cell.textLabel?.text = pokemon.name
+        cell.textLabel?.text = "\(indexPath.row). " + pokemon.name
         
         cell.imageView?.image = UIImage(named: "empty")
         cell.imageView?.backgroundColor = .clear
@@ -81,9 +100,10 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             }
         }
         
-        if ((indexPath.row + 1) == viewModel?.pokemons.count) {
-            viewModel?.fetchPokemons()
-        }
+        // MARK: Fetching next page with pokemons
+//        if ((indexPath.row + 1) == viewModel?.pokemons.count) {
+//            viewModel?.fetchPokemons()
+//        }
     }
     
 }

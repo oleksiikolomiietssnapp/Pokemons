@@ -13,24 +13,50 @@ class PokemonsViewModel {
     private var updateCallback: ((Error?) -> Void)?
     
     var pokemons = [Pokemon]()
-    var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
+    var pokemonsCount: Int = 0
+    private var isReversed: Bool = false
     
-    private var cache: [IndexPath: Data] = [:]
+    func toggleReverse() {
+        isReversed.toggle()
+        
+        pokemons.reverse()
+        
+        updateCallback?(nil)
+
+//        pokemons.removeAll()
+//        cache.removeAll()
+        
+//        next = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
+//        previus = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=\(pokemonsCount-100)"
+        
+//        fetchPokemons()
+    }
+    
+    var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
+    lazy var previus: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=\(pokemonsCount-100)"
+    
+    private var cache: [String: Data] = [:]
     private var cancellable: Set<AnyCancellable> = []
     
     func fetchPokemons() {
-        guard let next = next else { return }
+        if isReversed, previus == nil{
+            return
+        } else if !isReversed, next == nil {
+            return
+        }
         
-        PokemonsService.fetchPokemons(urlString: next) { result in
+        PokemonsService.fetchPokemons(urlString: isReversed ? previus : next) { result in
             switch result {
             case .success(let pokemonsResponse):
-                if pokemonsResponse.previous == nil {
-                    self.pokemons = pokemonsResponse.pokemons
+                if self.isReversed{
+                    self.pokemons.append(contentsOf: pokemonsResponse.pokemons.reversed())
+                    self.previus = pokemonsResponse.previous
                 } else {
                     self.pokemons.append(contentsOf: pokemonsResponse.pokemons)
+                    self.next = pokemonsResponse.next
                 }
                 
-                self.next = pokemonsResponse.next
+                self.pokemonsCount = pokemonsResponse.count
                 
                 self.updateCallback?(nil)
             case .failure(let error):
@@ -41,7 +67,8 @@ class PokemonsViewModel {
     
     func fetchPokemonImage(at indexPath: IndexPath, completion: @escaping (Data) -> Void) {
         DispatchQueue.global(qos: .userInteractive).sync {
-            if let cachedData = cache[indexPath] {
+            let name = pokemons[indexPath.row].name
+            if let cachedData = cache[name] {
                 completion(cachedData)
             } else {
                 fetchPokemonDetails(at: indexPath, completion)
@@ -72,7 +99,8 @@ class PokemonsViewModel {
             do {
                 let data = try Data(contentsOf: url)
                 DispatchQueue.main.async {
-                    self.cache[indexPath] = data
+                    let name = self.pokemons[indexPath.row].name
+                    self.cache[name] = data
                     completion(data)
                 }
             } catch {
