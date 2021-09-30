@@ -42,15 +42,31 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func prepareNavigationBar(){
         title = "Pokemon"
-        let button = UIBarButtonItem(image: UIImage(named: "reverse"), style: .plain, target: self, action: #selector(reverse))
-        button.width = 20
-        navigationItem.rightBarButtonItem = button
+        
+        let reverseButton = UIBarButtonItem(image: UIImage(systemName: "tray.and.arrow.down"), style: .plain, target: self, action: #selector(reverse))
+        
+        let filterButton = UIBarButtonItem(image: UIImage(systemName: "bookmark"),
+                                           style: .plain,
+                                           target: self,
+                                           action: #selector(filter))
+        
+        navigationItem.rightBarButtonItems = [reverseButton, filterButton]
        
     }
     
-    @objc func reverse(){
+    @objc func reverse() {
         guard let viewModel = viewModel else { return }
         viewModel.toggleReverse()
+        
+        if viewModel.isReversed {
+            navigationItem.rightBarButtonItems?[0].image = UIImage(systemName: "tray.and.arrow.up")
+        } else {
+            navigationItem.rightBarButtonItems?[0].image = UIImage(systemName: "tray.and.arrow.down")
+        }
+    }
+    
+    @objc func filter() {
+//        guard let viewModel = viewModel else { return }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

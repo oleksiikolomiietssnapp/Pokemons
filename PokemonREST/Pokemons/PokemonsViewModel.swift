@@ -14,7 +14,7 @@ class PokemonsViewModel {
     
     var pokemons = [Pokemon]()
     var pokemonsCount: Int = 0
-    private var isReversed: Bool = false
+    private(set) var isReversed: Bool = false
     
     func toggleReverse() {
         isReversed.toggle()
