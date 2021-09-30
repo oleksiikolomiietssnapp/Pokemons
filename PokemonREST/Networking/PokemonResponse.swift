@@ -27,6 +27,11 @@ struct Pokemon: Codable {
 
 struct PokemonDetailsResponse: Codable {
     let sprites: Sprites
+    let weight: Int
+    let height: Int
+    let base_experience: Int
+    
+    // Add CodingKeys to avoid snake case
 }
 
 struct Sprites: Codable {
