@@ -44,12 +44,12 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         title = "Pokemon"
         
         let reverseButton = UIBarButtonItem(image: UIImage(systemName: "tray.and.arrow.down"), style: .plain, target: self, action: #selector(reverse))
-        
+        reverseButton.tintColor = .systemOrange
         let filterButton = UIBarButtonItem(image: UIImage(systemName: "bookmark"),
                                            style: .plain,
                                            target: self,
                                            action: #selector(filter))
-        
+        filterButton.tintColor = .systemOrange
         navigationItem.rightBarButtonItems = [reverseButton, filterButton]
        
     }
@@ -80,7 +80,11 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             return cell
         }
         let pokemon = pokemonViewModel.pokemons[indexPath.row]
-        cell.textLabel?.text = "\(indexPath.row). " + pokemon.name
+        let stringNum = "\(indexPath.row)."
+        let stringWithName = "\(stringNum) \(pokemon.name)"
+        let attributedStringWithName = NSMutableAttributedString(string: stringWithName)
+        attributedStringWithName.addAttribute(.foregroundColor, value: UIColor.orange, range: NSRange(location: 0, length: stringNum.count))
+        cell.textLabel?.attributedText = attributedStringWithName
         
         cell.imageView?.image = UIImage(named: "empty")
         cell.imageView?.backgroundColor = .clear
