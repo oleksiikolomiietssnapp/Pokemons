@@ -45,13 +45,35 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         
         let reverseButton = UIBarButtonItem(image: UIImage(systemName: "tray.and.arrow.down"), style: .plain, target: self, action: #selector(reverse))
         reverseButton.tintColor = .systemOrange
-        let filterButton = UIBarButtonItem(image: UIImage(systemName: "bookmark"),
-                                           style: .plain,
-                                           target: self,
-                                           action: #selector(filter))
-        filterButton.tintColor = .systemOrange
-        navigationItem.rightBarButtonItems = [reverseButton, filterButton]
        
+        var menuItems: [UIAction] {
+            return [
+                UIAction(title: "Weight", image: UIImage(systemName: "sun.max"), handler: { (_) in
+                         }),
+                UIAction(title: "Height", image: UIImage(systemName: "moon"), handler: { (_) in
+                }),
+                UIAction(title: "Base experience", image: UIImage(systemName: "trash"), handler: { (_) in
+                })
+            ]
+        }
+
+        var demoMenu: UIMenu {
+            return UIMenu(title: "My menu",
+                          image: nil,
+                          identifier: nil,
+                          options: [],
+                          children: menuItems)
+        }
+
+        let filterButton = UIBarButtonItem(image: UIImage(named: "filter"), primaryAction: nil, menu: demoMenu)
+        filterButton.tintColor = .systemOrange
+        
+        navigationItem.rightBarButtonItems = [reverseButton, filterButton]
+//        func configureButtonMenu() {
+//            filterButton.menu = demoMenu
+//            filterButton.showsMenuAsPrimaryAction = true
+//        }
+        
     }
     
     @objc func reverse() {
@@ -66,7 +88,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     @objc func filter() {
-//        guard let viewModel = viewModel else { return }
+       
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -111,7 +133,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // TODO: Look why spinner iis there for 'kommo-0-totem' 
+        // TODO: Look why spinner iis there for 'kommo-0-totem'
         viewModel?.fetchPokemonImage(at: indexPath) { data in
             DispatchQueue.main.async {
                 self.activityIndicators[indexPath]?.removeFromSuperview()
@@ -121,9 +143,9 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         }
         
         // MARK: Fetching next page with pokemons
-//        if ((indexPath.row + 1) == viewModel?.pokemons.count) {
-//            viewModel?.fetchPokemons()
-//        }
+        //        if ((indexPath.row + 1) == viewModel?.pokemons.count) {
+        //            viewModel?.fetchPokemons()
+        //        }
     }
     
 }
