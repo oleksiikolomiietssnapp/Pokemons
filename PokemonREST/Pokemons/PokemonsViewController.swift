@@ -11,6 +11,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     @IBOutlet weak var tableView: UITableView!
     private var viewModel: PokemonsViewModel?
+    let pokemonCell = "PokemonCell"
     
     private var activityIndicators = [IndexPath: UIActivityIndicatorView]()
     
@@ -20,7 +21,9 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         prepareTableView()
         prepareViewModel()
     }
-    
+    func setupCell(){
+        tableView.register(UINib(nibName: pokemonCell, bundle: nil), forCellReuseIdentifier: pokemonCell)
+    }
     func prepareViewModel(){
         viewModel = PokemonsViewModel()
         
@@ -36,6 +39,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func prepareTableView(){
+        tableView.register(UINib(nibName: pokemonCell, bundle: nil), forCellReuseIdentifier: pokemonCell)
         tableView.dataSource = self
         tableView.delegate = self
     }
@@ -48,17 +52,17 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
        
         var menuItems: [UIAction] {
             return [
-                UIAction(title: "Weight", image: UIImage(systemName: "sun.max"), handler: { (_) in
+                UIAction(title: "Weight", image: UIImage(named: "weight-scale"), handler: { (_) in
                          }),
-                UIAction(title: "Height", image: UIImage(systemName: "moon"), handler: { (_) in
+                UIAction(title: "Height", image: UIImage(named: "height"), handler: { (_) in
                 }),
-                UIAction(title: "Base experience", image: UIImage(systemName: "trash"), handler: { (_) in
+                UIAction(title: "Base experience", image: UIImage(named: "certificate"), handler: { (_) in
                 })
             ]
         }
 
         var demoMenu: UIMenu {
-            return UIMenu(title: "My menu",
+            return UIMenu(title: "Filter for...",
                           image: nil,
                           identifier: nil,
                           options: [],
@@ -69,10 +73,6 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         filterButton.tintColor = .systemOrange
         
         navigationItem.rightBarButtonItems = [reverseButton, filterButton]
-//        func configureButtonMenu() {
-//            filterButton.menu = demoMenu
-//            filterButton.showsMenuAsPrimaryAction = true
-//        }
         
     }
     
@@ -96,51 +96,12 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        
-        guard let pokemonViewModel = viewModel else {
-            return cell
-        }
-        let pokemon = pokemonViewModel.pokemons[indexPath.row]
-        let stringNum = "\(indexPath.row)."
-        let stringWithName = "\(stringNum) \(pokemon.name)"
-        let attributedStringWithName = NSMutableAttributedString(string: stringWithName)
-        attributedStringWithName.addAttribute(.foregroundColor, value: UIColor.orange, range: NSRange(location: 0, length: stringNum.count))
-        cell.textLabel?.attributedText = attributedStringWithName
-        
-        cell.imageView?.image = UIImage(named: "empty")
-        cell.imageView?.backgroundColor = .clear
-        cell.selectionStyle = .blue
-        guard let imageView = cell.imageView else {
-            return cell
-        }
-        
-        // Spinner
-        let activityIndicator = UIActivityIndicatorView()
-        activityIndicator.color = .systemGray
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        cell.imageView?.addSubview(activityIndicator)
-        cell.addConstraints([
-            activityIndicator.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
-            activityIndicator.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            activityIndicator.heightAnchor.constraint(equalToConstant: 24),
-            activityIndicator.widthAnchor.constraint(equalToConstant: 24)
-        ])
-        activityIndicator.startAnimating()
-        activityIndicators[indexPath] = activityIndicator
-        
+        let cell = tableView.dequeueReusableCell(withIdentifier: pokemonCell, for: indexPath) as! PokemonCell
         return cell
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         // TODO: Look why spinner iis there for 'kommo-0-totem'
-        viewModel?.fetchPokemonImage(at: indexPath) { data in
-            DispatchQueue.main.async {
-                self.activityIndicators[indexPath]?.removeFromSuperview()
-                self.activityIndicators[indexPath] = nil
-                cell.imageView?.image = UIImage(data: data)
-            }
-        }
         
         // MARK: Fetching next page with pokemons
         //        if ((indexPath.row + 1) == viewModel?.pokemons.count) {

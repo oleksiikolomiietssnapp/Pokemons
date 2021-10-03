@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" restorationIdentifier="PokemonCell" selectionStyle="default" indentationWidth="10" reuseIdentifier="PokemonCell" rowHeight="51" id="KGk-i7-Jjw" customClass="PokemonCell" customModule="PokemonREST" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="51"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="51"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IQq-0m-eUI">
+                        <rect key="frame" x="0.0" y="74" width="320" height="1"/>
+                        <color key="backgroundColor" systemColor="systemGrayColor"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="1" id="KFe-a0-wsy"/>
+                        </constraints>
+                    </view>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="aPd-fO-zP8">
+                        <rect key="frame" x="20" y="0.0" width="48" height="48"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="48" id="K0r-5Z-Gex"/>
+                            <constraint firstAttribute="height" constant="48" id="MNX-t1-lYT"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vrz-rg-QNS">
+                        <rect key="frame" x="84" y="13.5" width="42" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="eWB-eO-wKg">
+                        <rect key="frame" x="34" y="14" width="20" height="20"/>
+                    </activityIndicatorView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="eWB-eO-wKg" firstAttribute="centerY" secondItem="aPd-fO-zP8" secondAttribute="centerY" id="8if-Rf-e0C"/>
+                    <constraint firstItem="IQq-0m-eUI" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="Z2D-b9-Kkd"/>
+                    <constraint firstItem="aPd-fO-zP8" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="cYf-n3-CGw"/>
+                    <constraint firstItem="vrz-rg-QNS" firstAttribute="centerY" secondItem="aPd-fO-zP8" secondAttribute="centerY" id="j4B-sh-4xI"/>
+                    <constraint firstItem="aPd-fO-zP8" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="jtJ-1M-bH3"/>
+                    <constraint firstItem="vrz-rg-QNS" firstAttribute="leading" secondItem="aPd-fO-zP8" secondAttribute="trailing" constant="16" id="lNL-ly-WjC"/>
+                    <constraint firstItem="eWB-eO-wKg" firstAttribute="centerX" secondItem="aPd-fO-zP8" secondAttribute="centerX" id="ma4-q0-SHb"/>
+                    <constraint firstAttribute="bottom" secondItem="aPd-fO-zP8" secondAttribute="bottom" id="nL6-DL-mxu"/>
+                    <constraint firstAttribute="bottom" secondItem="IQq-0m-eUI" secondAttribute="bottom" id="xKq-vg-2YJ"/>
+                    <constraint firstAttribute="trailing" secondItem="IQq-0m-eUI" secondAttribute="trailing" id="xeJ-wS-C1W"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="pokemonActivity" destination="eWB-eO-wKg" id="Sk2-VT-qGW"/>
+                <outlet property="pokemonImage" destination="aPd-fO-zP8" id="87A-Yy-4bO"/>
+                <outlet property="pokemonName" destination="vrz-rg-QNS" id="KVF-U2-pXs"/>
+            </connections>
+            <point key="canvasLocation" x="137.68115942028987" y="90.066964285714278"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <systemColor name="systemGrayColor">
+            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
