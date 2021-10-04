@@ -50,8 +50,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         let reverseButton = UIBarButtonItem(image: UIImage(systemName: "tray.and.arrow.down"), style: .plain, target: self, action: #selector(reverse))
         reverseButton.tintColor = .systemOrange
        
-        var menuItems: [UIAction] {
-            return [
+        let menuItems: [UIAction] = [
                 UIAction(title: "Weight", image: UIImage(named: "weight-scale"), handler: { (_) in
                          }),
                 UIAction(title: "Height", image: UIImage(named: "height"), handler: { (_) in
@@ -59,15 +58,13 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
                 UIAction(title: "Base experience", image: UIImage(named: "certificate"), handler: { (_) in
                 })
             ]
-        }
 
-        var demoMenu: UIMenu {
-            return UIMenu(title: "Filter for...",
+        let demoMenu: UIMenu = UIMenu(title: "Filter for...",
                           image: nil,
                           identifier: nil,
                           options: [],
                           children: menuItems)
-        }
+        
 
         let filterButton = UIBarButtonItem(image: UIImage(named: "filter"), primaryAction: nil, menu: demoMenu)
         filterButton.tintColor = .systemOrange
@@ -80,11 +77,8 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         guard let viewModel = viewModel else { return }
         viewModel.toggleReverse()
         
-        if viewModel.isReversed {
-            navigationItem.rightBarButtonItems?[0].image = UIImage(systemName: "tray.and.arrow.up")
-        } else {
-            navigationItem.rightBarButtonItems?[0].image = UIImage(systemName: "tray.and.arrow.down")
-        }
+        let imageName = viewModel.isReversed ? "tray.and.arrow.up" : "tray.and.arrow.down"
+        navigationItem.rightBarButtonItems?[0].image = UIImage(systemName: imageName)
     }
     
     @objc func filter() {
@@ -97,6 +91,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: pokemonCell, for: indexPath) as! PokemonCell
+        cell.set(pokemon: viewModel!.pokemons[indexPath.row])
         return cell
     }
     

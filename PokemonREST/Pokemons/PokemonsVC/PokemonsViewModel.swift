@@ -36,7 +36,6 @@ class PokemonsViewModel {
     lazy var previus: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=\(pokemonsCount-100)"
     
     private var cache: [String: Data] = [:]
-    private var cancellable: Set<AnyCancellable> = []
     
     func fetchPokemons() {
         if isReversed, previus == nil{
