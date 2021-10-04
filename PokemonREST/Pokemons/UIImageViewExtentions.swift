@@ -10,10 +10,11 @@ import UIKit
 
 extension UIImageView{
     func set(with url: URL, placeholder: UIImage? = nil){
-        let localPath = UserDefaults.standard.string(forKey: url.path)
-        if let localPath = localPath{
-            let localUrl = URL(string: localPath)!
-            let data = try? Data(contentsOf: localUrl)
+        let name = UserDefaults.standard.string(forKey: url.path)
+        if let name = name{
+            let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let url = documentDirectory.appendingPathComponent(name)
+            let data = try? Data(contentsOf: url)
             guard let data = data, let image = UIImage(data: data) else{
                 DispatchQueue.main.async {
                     self.image = placeholder
@@ -53,7 +54,7 @@ extension Data{
             do {
                 // writes the image data to disk
                 try write(to: url)
-                return url.absoluteString
+                return name
             } catch {
                 throw error
             }
