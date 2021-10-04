@@ -35,7 +35,7 @@ class PokemonsViewModel {
     var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
     lazy var previus: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=\(pokemonsCount-100)"
     
-    private var cache: [String: Data] = [:]
+    private var cache: [String: String] = [:]
     
     func fetchPokemons() {
         if isReversed, previus == nil{
@@ -64,7 +64,7 @@ class PokemonsViewModel {
         }
     }
     
-    func fetchPokemonImage(at indexPath: IndexPath, completion: @escaping (Data) -> Void) {
+    func fetchPokemonImage(at indexPath: IndexPath, completion: @escaping (String) -> Void) {
         DispatchQueue.global(qos: .userInteractive).sync {
             let name = pokemons[indexPath.row].name
             if let cachedData = cache[name] {
@@ -75,7 +75,7 @@ class PokemonsViewModel {
         }
     }
     
-    private func fetchPokemonDetails(at indexPath: IndexPath, _ completion: @escaping (Data) -> Void) {
+    private func fetchPokemonDetails(at indexPath: IndexPath, _ completion: @escaping (String) -> Void) {
         PokemonsService.fetchPokemonDetails(urlString: self.pokemons[indexPath.row].url) { result in
             switch result {
             case .success(let pokemonDetailsResponse):
@@ -88,25 +88,16 @@ class PokemonsViewModel {
     
     private func handleSuccessResult(_ pokemonDetailsResponse: PokemonDetailsResponse,
                                      at indexPath: IndexPath,
-                                     _ completion: @escaping (Data) -> Void) {
+                                     _ completion: @escaping (String) -> Void) {
         DispatchQueue.global(qos: .userInteractive).async(flags: .barrier) { [weak self] in
             guard let self = self,
-                  let frontDefault = pokemonDetailsResponse.sprites.frontDefault,
-                  let url = URL(string: frontDefault)
+                  let frontDefault = pokemonDetailsResponse.sprites.frontDefault
             else { return }
-            
-            do {
-                let data = try Data(contentsOf: url)
-                DispatchQueue.main.async {
-                    let name = self.pokemons[indexPath.row].name
-                    self.cache[name] = data
-                    completion(data)
-                }
-            } catch {
-                self.updateCallback?(error)
-                print(error.localizedDescription)
+            DispatchQueue.main.async {
+                let name = self.pokemons[indexPath.row].name
+                self.cache[name] = frontDefault
+                completion(frontDefault)
             }
-            
         }
     }
     

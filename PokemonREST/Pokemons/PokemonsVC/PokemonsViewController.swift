@@ -91,6 +91,9 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: pokemonCell, for: indexPath) as! PokemonCell
+        viewModel?.fetchPokemonImage(at: indexPath, completion: { path in
+            cell.imageURL = path
+        })
         cell.set(pokemon: viewModel!.pokemons[indexPath.row])
         return cell
     }

@@ -53,7 +53,7 @@ extension Data{
             do {
                 // writes the image data to disk
                 try write(to: url)
-                return url.path
+                return url.absoluteString
             } catch {
                 throw error
             }

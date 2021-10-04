@@ -13,6 +13,12 @@ class PokemonCell: UITableViewCell {
     @IBOutlet weak var pokemonName: UILabel!
     @IBOutlet weak var pokemonActivity: UIActivityIndicatorView!
     
+    var imageURL: String = String(){
+        didSet{
+            pokemonImage.set(with: URL(string: imageURL)!)
+        }
+    }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
     }
@@ -22,6 +28,6 @@ class PokemonCell: UITableViewCell {
     }
     
     func set(pokemon: Pokemon){
-        pokemonImage.set(with: URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/819.png")!)
+        pokemonName.text = pokemon.name
         }
 }
