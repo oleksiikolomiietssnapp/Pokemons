@@ -1,5 +1,5 @@
 //
-//  PokemonsViewController.swift
+//  ItemsViewController.swift
 //  PokemonREST
 //
 //  Created by Oleksii Kolomiiets on 29.05.2021.
@@ -7,10 +7,10 @@
 
 import UIKit
 
-class PokemonsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class ItemsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
-    private var viewModel: PokemonsViewModel?
+    private var viewModel: ItemsViewModel?
     
     private var activityIndicators = [IndexPath: UIActivityIndicatorView]()
     
@@ -18,7 +18,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
-        viewModel = PokemonsViewModel()
+        viewModel = ItemsViewModel()
         
         viewModel?.subscribe { error in
             if let error = error {
@@ -28,11 +28,11 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             
             self.tableView.reloadData()
         }
-        viewModel?.fetchPokemons()
+        viewModel?.fetchItems()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel?.pokemons.count ?? 0
+        return viewModel?.items.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -41,7 +41,7 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
         guard let pokemonViewModel = viewModel else {
             return cell
         }
-        let pokemon = pokemonViewModel.pokemons[indexPath.row]
+        let pokemon = pokemonViewModel.items[indexPath.row]
         cell.textLabel?.text = pokemon.name
         
         cell.imageView?.image = UIImage(named: "empty")
@@ -77,8 +77,8 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
             }
         }
         
-        if ((indexPath.row + 1) == viewModel?.pokemons.count) {
-            viewModel?.fetchPokemons()
+        if ((indexPath.row + 1) == viewModel?.items.count) {
+            viewModel?.fetchItems()
         }
     }
     
