@@ -17,9 +17,10 @@ class ItemsViewModel {
     private var cache: [IndexPath: Data] = [:]
     
     func fetchItems() {
-        guard let next = next else { return }
+        guard let next = next, let nextURL = URL(string: next) else { return }
+        let itemsURL = APIURL.items(nextURL)
 
-        Service.fetch(urlString: next) { (result: Result<Response, APPError>) in
+        Service<Response>.fetch(apiURL: itemsURL) { result in
             switch result {
             case .success(let pokemonsResponse):
                 self.next = pokemonsResponse.next
@@ -46,7 +47,10 @@ class ItemsViewModel {
     }
     
     private func fetchDetails(at indexPath: IndexPath, _ completion: @escaping (Data) -> Void) {
-        Service.fetch(urlString: self.items[indexPath.row].url) { (result: Result<DetailsResponse, APPError>) in
+        guard let detailsURL = URL(string: items[indexPath.row].url) else { return }
+        let detailsAPIURL = APIURL.details(detailsURL)
+        
+        Service<DetailsResponse>.fetch(apiURL: detailsAPIURL) { result in
             switch result {
             case .success(let detailsResponse):
                 self.handleSuccessResult(detailsResponse, at: indexPath, completion)

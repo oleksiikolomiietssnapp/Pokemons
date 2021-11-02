@@ -1,19 +1,49 @@
-//
-//  PokemonsService.swift
-//  PokemonREST
-//
-//  Created by Oleksii Kolomiiets on 29.05.2021.
-//
-
 import Foundation
 
-class Service {
-    
-    static func fetch<T: Decodable>(urlString: String, completion: @escaping (Result<T, APPError>) -> Void) {
+enum APIURL {
+    case items(URL)
+    case details(URL)
 
-        // MARK: - URLRequest
-        guard let url = URL(string: urlString) else { return }
-        let request = URLRequest(url: url)
+    var request: URLRequest {
+        switch self {
+        case .items(let url), .details(let url):
+            return URLRequest(url: url)
+        }
+    }
+}
+
+class Service<T: Decodable> {
+
+    static func fetch(apiURL: APIURL, completion: @escaping (Result<T, APPError>) -> Void)  {
+
+        CoreAPI.fetch(request: apiURL.request) { result in
+
+            switch result {
+            case .success(let data):
+
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    let decodedData = try decoder.decode(T.self, from: data)
+
+                    completion(.success(decodedData))
+                } catch {
+
+                    completion(.failure(APPError(parsingError: error)))
+                }
+            case .failure(let error):
+
+                completion(.failure(error))
+            }
+
+        }
+    }
+    
+}
+
+class CoreAPI {
+    
+    static func fetch(request: URLRequest, completion: @escaping (Result<Data, APPError>) -> Void) {
 
         // MARK: - Configure session
         let sessionConfiguration = URLSessionConfiguration.ephemeral
@@ -48,21 +78,8 @@ class Service {
                 return
             }
 
-            do {
-                // MARK: - Parsing Data:
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let decodedData = try decoder.decode(T.self, from: data)
-
-                DispatchQueue.main.async {
-                    completion(.success(decodedData))
-                }
-            } catch {
-
-                // MARK: - Decoder Error:
-                DispatchQueue.main.async {
-                    completion(.failure(APPError(parsingError: error)))
-                }
+            DispatchQueue.main.async {
+                completion(.success(data))
             }
         }
         task.resume()

@@ -26,6 +26,10 @@ struct DetailsResponse: Codable {
     }
 
     let details: Details
+
+    enum CodingKeys: String, CodingKey {
+        case details = "sprites"
+    }
 }
 
 
