@@ -1,10 +1,3 @@
-//
-//  Response.swift
-//  PokemonREST
-//
-//  Created by Oleksii Kolomiiets on 29.05.2021.
-//
-
 import Foundation
 
 struct Item: Codable {

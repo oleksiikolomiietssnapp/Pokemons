@@ -1,34 +1,21 @@
-//
-//  ItemsViewModel.swift
-//  PokemonREST
-//
-//  Created by Oleksii Kolomiiets on 29.05.2021.
-//
-
 import Foundation
 
-class ItemsViewModel {
+class PokemonsViewModel {
     
     private var updateCallback: ((Error?) -> Void)?
     
     var items = [Item]()
-    var next: String? = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0"
-    
+    private var page: String? = "https://pokeapi.co/api/v2/pokemon?limit=30&offset=0"
     private var cache: [IndexPath: Data] = [:]
     
-    func fetchItems() {
-        guard let next = next, let nextURL = URL(string: next) else { return }
-        let itemsURL = APIURL.items(nextURL)
+    func fetchPokemons() {
+        guard let next = page, let nextURL = URL(string: next) else { return }
+        let itemsURL = PokemonAPIURL.items(nextURL)
 
-        Service<Response>.fetch(apiURL: itemsURL) { result in
+        PokemonService<Response>.fetch(apiURL: itemsURL) { result in
             switch result {
             case .success(let pokemonsResponse):
-                self.next = pokemonsResponse.next
-                if pokemonsResponse.previous == nil {
-                    self.items = pokemonsResponse.results
-                } else {
-                    self.items.append(contentsOf: pokemonsResponse.results)
-                }
+                self.items = pokemonsResponse.results
                 self.updateCallback?(nil)
             case .failure(let error):
                 self.updateCallback?(error)
@@ -48,14 +35,14 @@ class ItemsViewModel {
     
     private func fetchDetails(at indexPath: IndexPath, _ completion: @escaping (Data) -> Void) {
         guard let detailsURL = URL(string: items[indexPath.row].url) else { return }
-        let detailsAPIURL = APIURL.details(detailsURL)
+        let detailsAPIURL = PokemonAPIURL.details(detailsURL)
         
-        Service<DetailsResponse>.fetch(apiURL: detailsAPIURL) { result in
+        PokemonService<DetailsResponse>.fetch(apiURL: detailsAPIURL) { result in
             switch result {
             case .success(let detailsResponse):
                 self.handleSuccessResult(detailsResponse, at: indexPath, completion)
             case .failure(let error):
-                print(error.localizedDescription)
+                self.updateCallback?(error)
             }
         }
     }
@@ -77,7 +64,6 @@ class ItemsViewModel {
                 }
             } catch {
                 self.updateCallback?(error)
-                print(error.localizedDescription)
             }
             
         }

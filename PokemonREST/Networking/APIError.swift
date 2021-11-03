@@ -1,34 +1,27 @@
-//
-//  APPError.swift
-//  PokemonREST
-//
-//  Created by Oleksii Kolomiiets on 29.05.2021.
-//
-
 import Foundation
 
-enum APPError: Error, LocalizedError {
-    case server(Error)
-    case statusCode(Int)
+enum APIError: Error, LocalizedError {
+    case badResponse
     case noData
-    case parserError(reason: String)
-    
+    case decodingError(reason: String)
+    case serverError(Error)
+
     var errorDescription: String? {
         switch self {
-        case .server(let error):
-            return error.localizedDescription
-        case .statusCode(let code):
-            return "Status code: \(code)"
+        case .badResponse:
+            return "Bad response"
         case .noData:
-            return "Data is nil"
-        case .parserError(let reason):
+            return "No data found"
+        case .decodingError(let reason):
             return reason
+        case .serverError(let error):
+            return error.localizedDescription
         }
     }
 
-    init(parsingError: Error) {
-        guard let decodingError = parsingError as? DecodingError else {
-            self = .parserError(reason: parsingError.localizedDescription)
+    init(decodingError: Error) {
+        guard let decodingError = decodingError as? DecodingError else {
+            self = .decodingError(reason: decodingError.localizedDescription)
             return
         }
 
@@ -43,7 +36,7 @@ enum APPError: Error, LocalizedError {
         @unknown default:
             break
         }
-        self = .parserError(reason: errorToReport)
+        self = .decodingError(reason: errorToReport)
     }
 }
 
