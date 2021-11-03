@@ -22,7 +22,9 @@ class PokemonsViewController: UIViewController, UITableViewDataSource, UITableVi
                 return
             }
 
-            self.tableView.reloadData()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
         viewModel?.fetchPokemons()
     }
