@@ -4,7 +4,7 @@ class PokemonsViewModel {
     
     private var updateCallback: ((Error?) -> Void)?
     
-    var items = [Item]()
+    var items = [PokemonItem]()
     private var page: String? = "https://pokeapi.co/api/v2/pokemon?limit=30&offset=0"
     private var cache: [IndexPath: Data] = [:]
     
@@ -12,7 +12,7 @@ class PokemonsViewModel {
         guard let next = page, let nextURL = URL(string: next) else { return }
         let itemsURL = PokemonAPIURL.items(nextURL)
 
-        PokemonService<Response>.fetch(apiURL: itemsURL) { result in
+        PokemonService<PokemonsResponse>.fetch(apiURL: itemsURL) { result in
             switch result {
             case .success(let pokemonsResponse):
                 self.items = pokemonsResponse.results
@@ -37,7 +37,7 @@ class PokemonsViewModel {
         guard let detailsURL = URL(string: items[indexPath.row].url) else { return }
         let detailsAPIURL = PokemonAPIURL.details(detailsURL)
         
-        PokemonService<DetailsResponse>.fetch(apiURL: detailsAPIURL) { result in
+        PokemonService<PokemonDetailsResponse>.fetch(apiURL: detailsAPIURL) { result in
             switch result {
             case .success(let detailsResponse):
                 self.handleSuccessResult(detailsResponse, at: indexPath, completion)
@@ -47,7 +47,7 @@ class PokemonsViewModel {
         }
     }
     
-    private func handleSuccessResult(_ detailsResponse: DetailsResponse,
+    private func handleSuccessResult(_ detailsResponse: PokemonDetailsResponse,
                                      at indexPath: IndexPath,
                                      _ completion: @escaping (Data) -> Void) {
         DispatchQueue.global(qos: .userInteractive).async(flags: .barrier) { [weak self] in

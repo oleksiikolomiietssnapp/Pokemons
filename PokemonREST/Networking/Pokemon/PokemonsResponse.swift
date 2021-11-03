@@ -1,18 +1,18 @@
 import Foundation
 
-struct Item: Codable {
+struct PokemonItem: Codable {
     let name: String
     let url: String
 }
 
-struct Response: Codable {
+struct PokemonsResponse: Codable {
     let count: Int
     let next: String?
     let previous: String?
-    let results: [Item]
+    let results: [PokemonItem]
 }
 
-struct DetailsResponse: Codable {
+struct PokemonDetailsResponse: Codable {
 
     struct Details: Codable {
         let frontDefault: String?
